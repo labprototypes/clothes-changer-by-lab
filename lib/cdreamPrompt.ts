@@ -1,8 +1,8 @@
-import type { GenerationPayload } from '@/types/GenerationPayload'
+import type { PromptInputPayload } from '@/types/GenerationPayload'
 
 export type CDreamPromptInput = {
   basePrompt: string
-  payload: GenerationPayload
+  payload: PromptInputPayload
   ordering?: string[]
 }
 

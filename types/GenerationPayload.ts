@@ -39,3 +39,26 @@ export type GenerationPayload = {
 // Server-side helpers: the API will receive files separately (multer buffers),
 // so the server representation will replace File with Buffer.
 export type ServerUploadItem = Omit<UploadItem, 'file'> & { file?: Buffer | null };
+
+// Server-side variants (no File, optional Buffer)
+export type ServerSection =
+  | { kind: 'top'; items: ServerUploadItem[]; sectionComment?: string }
+  | { kind: 'bottom'; items: ServerUploadItem[]; sectionComment?: string }
+  | { kind: 'shoes'; items: ServerUploadItem[]; sectionComment?: string }
+  | { kind: 'accessories'; items: ServerUploadItem[]; sectionComment?: string };
+
+export type ServerRefsBlock = {
+  light?: { items: ServerUploadItem[]; comment?: string };
+  color?: { items: ServerUploadItem[]; comment?: string };
+  style?: { items: ServerUploadItem[]; comment?: string };
+};
+
+export type ServerUserImages = { items: ServerUploadItem[]; comment?: string };
+
+export type ServerGenerationPayload = Omit<GenerationPayload, 'sections' | 'refs' | 'userImages'> & {
+  sections: ServerSection[];
+  refs?: ServerRefsBlock;
+  userImages?: ServerUserImages;
+};
+
+export type PromptInputPayload = GenerationPayload | ServerGenerationPayload;

@@ -1,5 +1,5 @@
 import OpenAI from 'openai'
-import type { GenerationPayload } from '@/types/GenerationPayload'
+import type { PromptInputPayload } from '@/types/GenerationPayload'
 
 export type PromptBuildResult = { prompt: string; ordering: string[] }
 
@@ -16,7 +16,7 @@ const SYSTEM_PROMPT = `Ты — стилист и промпт-инженер. �
 Соблюдай последовательность и непротиворечивость. Если чего-то нет — не выдумывай.
 Выводи JSON с ключами: { "prompt": string, "ordering": string[] }.`
 
-export async function buildPromptFromBrief(input: GenerationPayload, knownOrdering?: string[]): Promise<PromptBuildResult> {
+export async function buildPromptFromBrief(input: PromptInputPayload, knownOrdering?: string[]): Promise<PromptBuildResult> {
   const userBlocks: string[] = []
   userBlocks.push('Входные данные (JSON):')
   userBlocks.push('```json')
