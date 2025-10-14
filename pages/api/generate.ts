@@ -47,6 +47,7 @@ const UploadItemSchema = z.object({
 })
 
 const SectionSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('face'), items: z.array(UploadItemSchema), sectionComment: z.string().optional() }),
   z.object({ kind: z.literal('top'), items: z.array(UploadItemSchema), sectionComment: z.string().optional() }),
   z.object({ kind: z.literal('bottom'), items: z.array(UploadItemSchema), sectionComment: z.string().optional() }),
   z.object({ kind: z.literal('shoes'), items: z.array(UploadItemSchema), sectionComment: z.string().optional() }),
@@ -107,9 +108,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Per-block limits
     const MAX_ITEMS_PER_BLOCK = 10
-    const countSectionItems = (kind: 'top' | 'bottom' | 'shoes' | 'accessories') =>
+  const countSectionItems = (kind: 'face' | 'top' | 'bottom' | 'shoes' | 'accessories') =>
       parsed.sections.filter((s: any) => s.kind === kind).flatMap((s: any) => s.items).length
-    const sectionKinds: Array<'top' | 'bottom' | 'shoes' | 'accessories'> = ['top', 'bottom', 'shoes', 'accessories']
+  const sectionKinds: Array<'face' | 'top' | 'bottom' | 'shoes' | 'accessories'> = ['face', 'top', 'bottom', 'shoes', 'accessories']
     for (const k of sectionKinds) {
       if (countSectionItems(k) > MAX_ITEMS_PER_BLOCK) {
         return res.status(400).json({ error: `Too many items in section ${k}. Max ${MAX_ITEMS_PER_BLOCK}` })

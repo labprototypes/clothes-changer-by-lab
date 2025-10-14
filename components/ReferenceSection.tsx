@@ -4,6 +4,7 @@ import { useGeneration } from '@/app/context/GenerationContext'
 
 export default function ReferenceSection() {
   const { state, dispatch, orderingMap } = useGeneration()
+  const opt = state.options || {}
   const refKinds = [
     { key: 'light' as const, title: 'Свет' },
     { key: 'color' as const, title: 'Цвет' },
@@ -12,6 +13,37 @@ export default function ReferenceSection() {
 
   return (
     <div className="space-y-6">
+      <div className="rounded border p-3 space-y-3">
+        <div className="font-medium">Формат / Размер</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">Размер (size)</label>
+            <select
+              className="w-full border rounded px-2 py-1 text-sm"
+              value={opt.size || '2K'}
+              onChange={(e) => dispatch({ type: 'setOption', key: 'size', value: e.target.value as any })}
+            >
+              <option value="1K">1K</option>
+              <option value="2K">2K</option>
+              <option value="4K">4K</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">Соотношение сторон</label>
+            <select
+              className="w-full border rounded px-2 py-1 text-sm"
+              value={opt.aspectRatio || 'match_input_image'}
+              onChange={(e) => dispatch({ type: 'setOption', key: 'aspectRatio', value: e.target.value })}
+            >
+              <option value="match_input_image">Авто (по входу)</option>
+              <option value="1:1">1:1</option>
+              <option value="4:3">4:3</option>
+              <option value="16:9">16:9</option>
+            </select>
+          </div>
+          <div className="text-xs text-gray-500 flex items-end">Если есть фото пользователя — формат «match_input_image» для согласования.</div>
+        </div>
+      </div>
       {refKinds.map(({ key, title }) => {
         const block = state.refs[key] || { items: [], comment: '' }
         return (

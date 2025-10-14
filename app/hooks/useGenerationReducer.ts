@@ -23,11 +23,11 @@ export type GenerationState = Omit<GenerationPayload, 'sections' | 'refs' | 'use
 type Action =
   | { type: 'setMode'; mode: Mode }
   // preset removed
-  | { type: 'setOption'; key: keyof NonNullable<GenerationPayload['options']>; value: boolean | number | null }
+  | { type: 'setOption'; key: keyof NonNullable<GenerationPayload['options']>; value: boolean | number | string | null }
   | { type: 'setBrief'; text: string }
-  | { type: 'addSectionFiles'; kind: 'top' | 'bottom' | 'shoes' | 'accessories'; files: File[] }
-  | { type: 'removeSectionItem'; kind: 'top' | 'bottom' | 'shoes' | 'accessories'; index: number }
-  | { type: 'setSectionComment'; kind: 'top' | 'bottom' | 'shoes' | 'accessories'; text: string }
+  | { type: 'addSectionFiles'; kind: 'face' | 'top' | 'bottom' | 'shoes' | 'accessories'; files: File[] }
+  | { type: 'removeSectionItem'; kind: 'face' | 'top' | 'bottom' | 'shoes' | 'accessories'; index: number }
+  | { type: 'setSectionComment'; kind: 'face' | 'top' | 'bottom' | 'shoes' | 'accessories'; text: string }
   | { type: 'setItemComment'; area: 'section' | 'ref' | 'user'; kind?: 'top' | 'bottom' | 'shoes' | 'accessories' | 'light' | 'color' | 'style'; index: number; text: string }
   | { type: 'addRefFiles'; refKind: 'light' | 'color' | 'style'; files: File[] }
   | { type: 'removeRefItem'; refKind: 'light' | 'color' | 'style'; index: number }
@@ -47,6 +47,7 @@ const initialState: GenerationState = {
   // presetStyle removed
   textBrief: '',
   sections: [
+    { kind: 'face', items: [], sectionComment: '' },
     { kind: 'top', items: [], sectionComment: '' },
     { kind: 'bottom', items: [], sectionComment: '' },
     { kind: 'shoes', items: [], sectionComment: '' },
@@ -54,7 +55,7 @@ const initialState: GenerationState = {
   ],
   refs: { light: { items: [], comment: '' }, color: { items: [], comment: '' }, style: { items: [], comment: '' } },
   userImages: { items: [], comment: '' },
-  options: { keepBackground: false, redrawBackground: false, highDetail: true, seed: null },
+  options: { keepBackground: false, redrawBackground: false, highDetail: true, seed: null, size: '2K', aspectRatio: 'match_input_image' },
   loading: false,
   error: null,
   resultBase64: null,
@@ -95,7 +96,10 @@ function reducer(state: GenerationState, action: Action): GenerationState {
       return { ...state, sections }
     }
     case 'setItemComment': {
-      if (action.area === 'section' && (action.kind === 'top' || action.kind === 'bottom' || action.kind === 'shoes' || action.kind === 'accessories')) {
+      if (
+        action.area === 'section' &&
+        ['face', 'top', 'bottom', 'shoes', 'accessories'].includes(action.kind as any)
+      ) {
         const sections = state.sections.map((s) => {
           if (s.kind !== action.kind) return s
           const items = s.items.map((it, i) => (i === action.index ? { ...it, comment: action.text } : it))
@@ -169,8 +173,8 @@ export function useGenerationReducer() {
     let n = 1
     const byOrder = (a: UploadItem, b: UploadItem) => a.displayOrder - b.displayOrder
 
-    const sec = state.sections
-    for (const k of ['top', 'bottom', 'shoes', 'accessories'] as const) {
+  const sec = state.sections
+  for (const k of ['face', 'top', 'bottom', 'shoes', 'accessories'] as const) {
       const s = sec.find((x) => x.kind === k)
       s?.items.slice().sort(byOrder).forEach((it) => map.set(it.id, n++))
     }

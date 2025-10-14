@@ -5,7 +5,7 @@ import { useGeneration } from '@/app/context/GenerationContext'
 export default function ClothesSection() {
   const { state, dispatch, orderingMap } = useGeneration()
 
-  const renderBlock = (kind: 'top' | 'bottom' | 'shoes' | 'accessories', title: string) => {
+  const renderBlock = (kind: 'face' | 'top' | 'bottom' | 'shoes' | 'accessories', title: string) => {
     const section = state.sections.find((s) => s.kind === kind)!
     return (
       <div>
@@ -26,7 +26,7 @@ export default function ClothesSection() {
                   className="text-sm border rounded px-2 py-1"
                   placeholder="Комментарий к этому элементу"
                   value={it.comment || ''}
-                  onChange={(e) => dispatch({ type: 'setItemComment', area: 'section', kind, index: i, text: e.target.value })}
+                  onChange={(e) => dispatch({ type: 'setItemComment', area: 'section', kind: kind as any, index: i, text: e.target.value })}
                 />
               </div>
               <button className="text-xs text-red-600" onClick={() => dispatch({ type: 'removeSectionItem', kind, index: i })}>Удалить</button>
@@ -47,6 +47,7 @@ export default function ClothesSection() {
 
   return (
     <div className="space-y-6">
+      {renderBlock('face', 'Лицо / типаж модели')}
       {renderBlock('top', 'Верх')}
       {renderBlock('bottom', 'Низ')}
       {renderBlock('shoes', 'Обувь')}

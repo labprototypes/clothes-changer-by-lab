@@ -6,6 +6,7 @@ export type UploadItem = {
 };
 
 export type Section =
+  | { kind: 'face'; items: UploadItem[]; sectionComment?: string }
   | { kind: 'top'; items: UploadItem[]; sectionComment?: string }
   | { kind: 'bottom'; items: UploadItem[]; sectionComment?: string }
   | { kind: 'shoes'; items: UploadItem[]; sectionComment?: string }
@@ -23,7 +24,6 @@ export type Mode = 'text' | 'refs+text' | 'replace-on-user';
 
 export type GenerationPayload = {
   mode: Mode;
-  presetStyle?: 'street' | 'classic' | 'minimal' | 'sport' | 'none';
   textBrief?: string;
   sections: Section[];
   refs?: RefsBlock;
@@ -33,6 +33,8 @@ export type GenerationPayload = {
     redrawBackground?: boolean;
     highDetail?: boolean;
     seed?: number | null;
+  size?: '1K' | '2K' | '4K';
+  aspectRatio?: string; // e.g. 'match_input_image' | '1:1' | '4:3' | '16:9'
   };
 };
 
@@ -42,6 +44,7 @@ export type ServerUploadItem = Omit<UploadItem, 'file'> & { file?: Buffer | null
 
 // Server-side variants (no File, optional Buffer)
 export type ServerSection =
+  | { kind: 'face'; items: ServerUploadItem[]; sectionComment?: string }
   | { kind: 'top'; items: ServerUploadItem[]; sectionComment?: string }
   | { kind: 'bottom'; items: ServerUploadItem[]; sectionComment?: string }
   | { kind: 'shoes'; items: ServerUploadItem[]; sectionComment?: string }

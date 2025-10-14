@@ -10,6 +10,7 @@ export type RunOptions = {
     width?: number
     height?: number
     aspect_ratio?: string
+  aspectRatio?: string
     max_images?: number
     sequential_image_generation?: 'disabled' | 'auto'
   }
@@ -28,7 +29,7 @@ function buildModelInput(opts: RunOptions) {
   const input: Record<string, any> = {
     prompt: opts.prompt,
     image_input: opts.images, // Seedream-4 uses image_input
-    aspect_ratio: opts.options?.aspect_ratio ?? 'match_input_image',
+  aspect_ratio: opts.options?.aspect_ratio ?? opts.options?.aspectRatio ?? 'match_input_image',
     sequential_image_generation: opts.options?.sequential_image_generation ?? 'disabled',
   }
 
