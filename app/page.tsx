@@ -6,8 +6,10 @@ import PresetStyleSelect from '@/components/PresetStyleSelect'
 import OptionsPanel from '@/components/OptionsPanel'
 import GenerateButton from '@/components/GenerateButton'
 import ResultPreview from '@/components/ResultPreview'
+import { useGenerationReducer } from './hooks/useGenerationReducer'
 
 export default function Page() {
+  const { state, dispatch } = useGenerationReducer()
   return (
     <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {/* Левая колонка — Одежда */}
@@ -38,10 +40,21 @@ export default function Page() {
         <h2 className="section-title mb-3">Режим и референсы</h2>
         <div className="space-y-4">
           <ModeSelector />
+          <div className="border rounded-lg p-3">
+            <div className="font-medium mb-2">Текущий режим: {state.mode}</div>
+            <div className="help-text">Это временный индикатор состояния useReducer.</div>
+          </div>
           <ReferenceSection />
           <div className="border rounded-lg p-3">
             <div className="font-medium">Текстовый бриф</div>
-            <p className="help-text">Опционально. Коротко опишите желаемый результат.</p>
+            <p className="help-text mb-2">Опционально. Коротко опишите желаемый результат.</p>
+            <textarea
+              className="w-full rounded-md border p-2 text-sm"
+              rows={4}
+              placeholder="Например: минималистичный street-образ..."
+              value={state.textBrief}
+              onChange={(e) => dispatch({ type: 'setBrief', text: e.target.value })}
+            />
           </div>
           <UserImageSection />
         </div>
