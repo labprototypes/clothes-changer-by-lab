@@ -21,12 +21,13 @@ export default function ReferenceSection() {
             <select
               className="w-full border rounded px-2 py-1 text-sm"
               value={opt.size || '2K'}
-              onChange={(e) => dispatch({ type: 'setOption', key: 'size', value: e.target.value as any })}
+              onChange={(e) => { dispatch({ type: 'setOption', key: 'size', value: e.target.value as any }); dispatch({ type: 'setOption', key: 'autoSized', value: false }) }}
             >
               <option value="1K">1K</option>
               <option value="2K">2K</option>
               <option value="4K">4K</option>
             </select>
+            {opt.autoSized && <div className="mt-1 text-[10px] text-green-600">Автовыбор по фото пользователя</div>}
           </div>
           <div>
             <label className="block text-xs text-gray-500 mb-1">Соотношение сторон</label>

@@ -35,6 +35,7 @@ export type GenerationPayload = {
     seed?: number | null;
   size?: '1K' | '2K' | '4K';
   aspectRatio?: string; // e.g. 'match_input_image' | '1:1' | '4:3' | '16:9'
+  autoSized?: boolean; // internal flag (frontend only)
   };
 };
 

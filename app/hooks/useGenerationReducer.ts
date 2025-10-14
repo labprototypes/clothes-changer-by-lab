@@ -8,7 +8,7 @@ function uuid() {
     return v.toString(16)
   })
 }
-import { useReducer, useMemo } from 'react'
+import { useReducer, useMemo, useEffect } from 'react'
 import type { GenerationPayload, Mode, RefsBlock, Section, UploadItem, UserImages } from '@/types/GenerationPayload'
 
 export type GenerationState = Omit<GenerationPayload, 'sections' | 'refs' | 'userImages' | 'presetStyle'> & {
@@ -55,7 +55,7 @@ const initialState: GenerationState = {
   ],
   refs: { light: { items: [], comment: '' }, color: { items: [], comment: '' }, style: { items: [], comment: '' } },
   userImages: { items: [], comment: '' },
-  options: { keepBackground: false, redrawBackground: false, highDetail: true, seed: null, size: '2K', aspectRatio: 'match_input_image' },
+  options: { keepBackground: false, redrawBackground: false, highDetail: true, seed: null, size: '2K', aspectRatio: 'match_input_image', autoSized: false },
   loading: false,
   error: null,
   resultBase64: null,
@@ -166,6 +166,27 @@ function reducer(state: GenerationState, action: Action): GenerationState {
 
 export function useGenerationReducer() {
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  // Auto-size: if user image present, detect its dimensions once and choose closest size bucket.
+  useEffect(() => {
+    if (state.options?.autoSized) return
+    const imgFile = state.userImages.items[0]?.file
+    if (!imgFile) return
+    const url = URL.createObjectURL(imgFile)
+    const img = new Image()
+    img.onload = () => {
+      const maxDim = Math.max(img.width, img.height)
+      let size: '1K' | '2K' | '4K' = '1K'
+      if (maxDim >= 4096) size = '4K'
+      else if (maxDim >= 2048) size = '2K'
+      else size = '1K'
+      dispatch({ type: 'setOption', key: 'size', value: size })
+      dispatch({ type: 'setOption', key: 'autoSized', value: true })
+      URL.revokeObjectURL(url)
+    }
+    img.onerror = () => URL.revokeObjectURL(url)
+    img.src = url
+  }, [state.userImages.items, state.options?.autoSized])
 
   // Compute global numbering consistent with backend order
   const orderingMap = useMemo(() => {

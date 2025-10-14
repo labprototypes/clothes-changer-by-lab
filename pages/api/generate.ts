@@ -75,6 +75,9 @@ const JsonSchema = z.object({
       redrawBackground: z.boolean().optional(),
       highDetail: z.boolean().optional(),
       seed: z.number().int().nullable().optional(),
+  size: z.enum(['1K', '2K', '4K']).optional(),
+  aspectRatio: z.string().optional(),
+  autoSized: z.boolean().optional(),
     })
     .optional(),
 })
@@ -238,7 +241,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         images,
         options: {
           seed: parsed.options?.seed ?? null,
-          aspect_ratio: 'match_input_image',
+          aspect_ratio: parsed.options?.aspectRatio || 'match_input_image',
+          size: parsed.options?.size,
           sequential_image_generation: 'disabled',
         },
         signal: controller.signal,
