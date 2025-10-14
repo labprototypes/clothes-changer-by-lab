@@ -78,7 +78,6 @@ const JsonSchema = z.object({
       seed: z.number().int().nullable().optional(),
   size: z.enum(['1K', '2K', '4K']).optional(),
   aspectRatio: z.string().optional(),
-  autoSized: z.boolean().optional(),
     })
     .optional(),
 })
