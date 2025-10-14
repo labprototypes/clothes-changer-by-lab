@@ -21,7 +21,6 @@ export default function GenerateButton() {
     try {
       const payload: GenerationPayload = {
         mode: state.mode,
-        presetStyle: state.presetStyle,
         textBrief: state.textBrief,
         sections: state.sections,
         refs: state.refs,

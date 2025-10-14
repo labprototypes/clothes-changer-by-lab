@@ -3,7 +3,6 @@ import ClothesSection from '@/components/ClothesSection'
 import ReferenceSection from '@/components/ReferenceSection'
 import UserImageSection from '@/components/UserImageSection'
 import ModeSelector from '@/components/ModeSelector'
-import PresetStyleSelect from '@/components/PresetStyleSelect'
 import OptionsPanel from '@/components/OptionsPanel'
 import GenerateButton from '@/components/GenerateButton'
 import ResultPreview from '@/components/ResultPreview'
@@ -47,8 +46,7 @@ export default function Page() {
       {/* Правая колонка — Действие */}
       <aside className="card p-4 md:p-5 lg:p-6">
         <h2 className="section-title mb-3">Действие</h2>
-        <div className="space-y-4">
-          <PresetStyleSelect />
+  <div className="space-y-4">
           <OptionsPanel />
           <GenerateButton />
           <ResultPreview />

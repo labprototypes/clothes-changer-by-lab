@@ -9,9 +9,7 @@ export type CDreamPromptInput = {
 export function buildCDreamPrompt({ basePrompt, payload, ordering }: CDreamPromptInput): string {
   const parts: string[] = [basePrompt.trim()]
 
-  if (payload.presetStyle && payload.presetStyle !== 'none') {
-    parts.push(`Стиль: ${payload.presetStyle}.`)
-  }
+  // preset styles removed from UI — rely on user-provided references instead
 
   const flags: string[] = []
   if (payload.options?.keepBackground) flags.push('сохранить фон')

@@ -11,7 +11,7 @@ function uuid() {
 import { useReducer, useMemo } from 'react'
 import type { GenerationPayload, Mode, RefsBlock, Section, UploadItem, UserImages } from '@/types/GenerationPayload'
 
-export type GenerationState = Omit<GenerationPayload, 'sections' | 'refs' | 'userImages'> & {
+export type GenerationState = Omit<GenerationPayload, 'sections' | 'refs' | 'userImages' | 'presetStyle'> & {
   sections: Section[]
   refs: RefsBlock
   userImages: UserImages
@@ -22,7 +22,7 @@ export type GenerationState = Omit<GenerationPayload, 'sections' | 'refs' | 'use
 
 type Action =
   | { type: 'setMode'; mode: Mode }
-  | { type: 'setPreset'; preset: GenerationState['presetStyle'] }
+  // preset removed
   | { type: 'setOption'; key: keyof NonNullable<GenerationPayload['options']>; value: boolean | number | null }
   | { type: 'setBrief'; text: string }
   | { type: 'addSectionFiles'; kind: 'top' | 'bottom' | 'shoes' | 'accessories'; files: File[] }
@@ -44,7 +44,7 @@ const emptyUploadItem = (file: File, displayOrder: number): UploadItem => ({ id:
 
 const initialState: GenerationState = {
   mode: 'text',
-  presetStyle: 'none',
+  // presetStyle removed
   textBrief: '',
   sections: [
     { kind: 'top', items: [], sectionComment: '' },
@@ -64,8 +64,7 @@ function reducer(state: GenerationState, action: Action): GenerationState {
   switch (action.type) {
     case 'setMode':
       return { ...state, mode: action.mode }
-    case 'setPreset':
-      return { ...state, presetStyle: action.preset }
+  // preset removed
     case 'setOption':
       return { ...state, options: { ...state.options, [action.key]: action.value as any } }
     case 'setBrief':
