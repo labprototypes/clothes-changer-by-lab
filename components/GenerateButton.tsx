@@ -19,13 +19,19 @@ export default function GenerateButton() {
 
     dispatch({ type: 'setLoading', value: true })
     try {
+      // Auto-format fallback: if aspectRatio = match_input_image but нет user image -> force 1:1
+      const hasUser = state.userImages.items.length > 0
+      const opt = { ...(state.options || {}) }
+      if (opt.aspectRatio === 'match_input_image' && !hasUser) {
+        opt.aspectRatio = '1:1'
+      }
       const payload: GenerationPayload = {
         mode: state.mode,
         textBrief: state.textBrief,
         sections: state.sections,
         refs: state.refs,
         userImages: state.userImages,
-        options: state.options,
+        options: opt,
       }
 
       const { formData } = buildFormDataAndOrdering(payload)

@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { buildPromptFromBrief } from '@/lib/prompts'
 import { buildCDreamPrompt } from '@/lib/cdreamPrompt'
 import { runCDream } from '@/lib/replicate'
+import { clampAspect } from '@/lib/aspectClamp'
 
 // Disable Next.js body parsing (we use multer)
 export const config = {
@@ -226,8 +227,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       counter++
     }
 
+    // Clamp extreme aspect ratios for all input images (model requires 0.33–3.0)
+    const processedImages: Buffer[] = []
+    for (const b of images) {
+      try {
+        const { buffer } = await clampAspect(b)
+        processedImages.push(buffer)
+      } catch {
+        processedImages.push(b) // fallback on failure
+      }
+    }
+
     // OpenAI brief stabilization
-  const { prompt: briefPrompt } = await buildPromptFromBrief(parsed as any, ordering)
+    const { prompt: briefPrompt } = await buildPromptFromBrief(parsed as any, ordering)
     const finalPrompt = buildCDreamPrompt({ basePrompt: briefPrompt, payload: parsed, ordering })
 
     // Replicate call with timeout
@@ -238,7 +250,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       resultBuffer = await runCDream({
         prompt: finalPrompt,
-        images,
+        images: processedImages,
         options: {
           seed: parsed.options?.seed ?? null,
           aspect_ratio: parsed.options?.aspectRatio || 'match_input_image',
@@ -247,6 +259,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
         signal: controller.signal,
       })
+  // Debug log (can be removed later)
+  console.log('Replicate input size/aspect_ratio', parsed.options?.size, parsed.options?.aspectRatio)
     } catch (err: any) {
       if (err?.name === 'AbortError' || err?.message === 'timeout') {
         return res.status(504).json({ error: 'Replicate timeout' })

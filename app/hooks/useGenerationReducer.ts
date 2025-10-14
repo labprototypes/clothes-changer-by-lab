@@ -140,7 +140,9 @@ function reducer(state: GenerationState, action: Action): GenerationState {
       const next = [...state.userImages.items]
       const start = next.length
       for (let i = 0; i < action.files.length; i++) next.push(emptyUploadItem(action.files[i], start + i))
-      return { ...state, userImages: { ...state.userImages, items: next } }
+  // Auto-switch mode when user image present
+  const mode = next.length > 0 ? 'replace-on-user' : state.mode
+  return { ...state, mode, userImages: { ...state.userImages, items: next } }
     }
     case 'removeUserItem': {
       const next = [...state.userImages.items]
