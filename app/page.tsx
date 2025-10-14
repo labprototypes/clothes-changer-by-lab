@@ -15,24 +15,7 @@ export default function Page() {
       {/* Левая колонка — Одежда */}
       <section className="card p-4 md:p-5 lg:p-6">
         <h2 className="section-title mb-3">Одежда</h2>
-        <div className="space-y-4">
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Верх</div>
-            <p className="help-text">Загрузите несколько изображений. Комментарии необязательны.</p>
-          </div>
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Низ</div>
-            <p className="help-text">Загрузите несколько изображений. Комментарии необязательны.</p>
-          </div>
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Обувь</div>
-            <p className="help-text">Загрузите несколько изображений. Комментарии необязательны.</p>
-          </div>
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Аксессуары</div>
-            <p className="help-text">Загрузите несколько изображений. Комментарии необязательны.</p>
-          </div>
-        </div>
+  <ClothesSection />
       </section>
 
       {/* Средняя колонка — Режим и референсы */}
