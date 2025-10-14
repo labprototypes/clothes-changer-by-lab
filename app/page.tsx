@@ -1,3 +1,4 @@
+"use client"
 import ClothesSection from '@/components/ClothesSection'
 import ReferenceSection from '@/components/ReferenceSection'
 import UserImageSection from '@/components/UserImageSection'
