@@ -37,9 +37,43 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse): Promise<void>
   })
 }
 
+const UploadItemSchema = z.object({
+  id: z.string().min(1),
+  comment: z.string().max(2000).optional().default(''),
+  displayOrder: z.number().int().nonnegative(),
+})
+
+const SectionSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('top'), items: z.array(UploadItemSchema), sectionComment: z.string().optional() }),
+  z.object({ kind: z.literal('bottom'), items: z.array(UploadItemSchema), sectionComment: z.string().optional() }),
+  z.object({ kind: z.literal('shoes'), items: z.array(UploadItemSchema), sectionComment: z.string().optional() }),
+  z.object({ kind: z.literal('accessories'), items: z.array(UploadItemSchema), sectionComment: z.string().optional() }),
+])
+
+const RefsBlockSchema = z.object({
+  light: z.object({ items: z.array(UploadItemSchema), comment: z.string().optional() }).optional(),
+  color: z.object({ items: z.array(UploadItemSchema), comment: z.string().optional() }).optional(),
+  style: z.object({ items: z.array(UploadItemSchema), comment: z.string().optional() }).optional(),
+})
+
+const UserImagesSchema = z.object({ items: z.array(UploadItemSchema), comment: z.string().optional() })
+
 const JsonSchema = z.object({
   mode: z.enum(['text', 'refs+text', 'replace-on-user']),
-}).passthrough()
+  presetStyle: z.enum(['street', 'classic', 'minimal', 'sport', 'none']).optional(),
+  textBrief: z.string().max(5000).optional(),
+  sections: z.array(SectionSchema).default([]),
+  refs: RefsBlockSchema.optional(),
+  userImages: UserImagesSchema.optional(),
+  options: z
+    .object({
+      keepBackground: z.boolean().optional(),
+      redrawBackground: z.boolean().optional(),
+      highDetail: z.boolean().optional(),
+      seed: z.number().int().nullable().optional(),
+    })
+    .optional(),
+})
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -63,10 +97,55 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Invalid JSON in field "json"' })
     }
 
-  const files = ((req as any).files as any[]) || []
-    // Quick sanity check: no more than 50 files and at least 0
+    const files = ((req as any).files as any[]) || []
     if (files.length > 50) {
       return res.status(422).json({ error: 'Too many files in request' })
+    }
+
+    // Per-block limits
+    const MAX_ITEMS_PER_BLOCK = 10
+    const countSectionItems = (kind: 'top' | 'bottom' | 'shoes' | 'accessories') =>
+      parsed.sections.filter((s: any) => s.kind === kind).flatMap((s: any) => s.items).length
+    const sectionKinds: Array<'top' | 'bottom' | 'shoes' | 'accessories'> = ['top', 'bottom', 'shoes', 'accessories']
+    for (const k of sectionKinds) {
+      if (countSectionItems(k) > MAX_ITEMS_PER_BLOCK) {
+        return res.status(400).json({ error: `Too many items in section ${k}. Max ${MAX_ITEMS_PER_BLOCK}` })
+      }
+    }
+    const refs = parsed.refs || {}
+    for (const r of ['light', 'color', 'style'] as const) {
+      const itemsLen = refs[r]?.items?.length || 0
+      if (itemsLen > MAX_ITEMS_PER_BLOCK) {
+        return res.status(400).json({ error: `Too many items in refs ${r}. Max ${MAX_ITEMS_PER_BLOCK}` })
+      }
+    }
+    const userCount = parsed.userImages?.items?.length || 0
+    if (parsed.mode === 'replace-on-user') {
+      if (userCount < 1) {
+        return res.status(400).json({ error: 'User image is required for mode replace-on-user' })
+      }
+      if (userCount > 3) {
+        return res.status(400).json({ error: 'Too many user images. Max 3' })
+      }
+    } else {
+      if (userCount > 3) {
+        return res.status(400).json({ error: 'Too many user images. Max 3' })
+      }
+    }
+
+    // Expected files count based on JSON (each UploadItem corresponds to one file)
+    const expectedFiles =
+      parsed.sections.reduce((acc: number, s: any) => acc + (s.items?.length || 0), 0) +
+      (refs.light?.items?.length || 0) +
+      (refs.color?.items?.length || 0) +
+      (refs.style?.items?.length || 0) +
+      (parsed.userImages?.items?.length || 0)
+
+    if (files.length !== expectedFiles) {
+      return res.status(422).json({
+        error: 'Files count mismatch',
+        details: { expected: expectedFiles, received: files.length },
+      })
     }
 
     // Placeholder response for now
