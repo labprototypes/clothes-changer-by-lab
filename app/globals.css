@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-ink: #111213;
+  --color-soft: #f5f6f7;
+  --color-primary: #C6F36B;
+}
+
+html, body {
+  height: 100%;
+}
+
+/* Utility helpers */
+.card {
+  @apply bg-white rounded-xl shadow-card border border-gray-100;
+}
+
+.section-title {
+  @apply text-base font-medium text-ink;
+}
+
+.help-text {
+  @apply text-xs text-gray-500;
+}
