@@ -4,18 +4,18 @@ import { useGeneration } from '@/app/context/GenerationContext'
 
 export default function ClothesSection() {
   const { state, dispatch, orderingMap } = useGeneration()
-  const top = state.sections.find((s) => s.kind === 'top')!
 
-  return (
-    <div className="space-y-4">
+  const renderBlock = (kind: 'top' | 'bottom' | 'shoes' | 'accessories', title: string) => {
+    const section = state.sections.find((s) => s.kind === kind)!
+    return (
       <div>
-        <div className="font-medium">Верх</div>
+        <div className="font-medium">{title}</div>
         <UploadZone
           label="Добавить элементы (множественная загрузка)"
-          onFiles={(files) => dispatch({ type: 'addSectionFiles', kind: 'top', files })}
+          onFiles={(files) => dispatch({ type: 'addSectionFiles', kind, files })}
         />
         <ul className="mt-3 space-y-2">
-          {top.items.map((it, i) => (
+          {section.items.map((it, i) => (
             <li key={it.id} className="flex items-center justify-between rounded border p-2">
               <div className="flex items-center gap-3">
                 <div className="text-xs text-gray-500">№{orderingMap.get(it.id)}</div>
@@ -26,10 +26,10 @@ export default function ClothesSection() {
                   className="text-sm border rounded px-2 py-1"
                   placeholder="Комментарий к этому элементу"
                   value={it.comment || ''}
-                  onChange={(e) => dispatch({ type: 'setItemComment', area: 'section', kind: 'top', index: i, text: e.target.value })}
+                  onChange={(e) => dispatch({ type: 'setItemComment', area: 'section', kind, index: i, text: e.target.value })}
                 />
               </div>
-              <button className="text-xs text-red-600" onClick={() => dispatch({ type: 'removeSectionItem', kind: 'top', index: i })}>Удалить</button>
+              <button className="text-xs text-red-600" onClick={() => dispatch({ type: 'removeSectionItem', kind, index: i })}>Удалить</button>
             </li>
           ))}
         </ul>
@@ -37,11 +37,20 @@ export default function ClothesSection() {
           <input
             className="w-full text-sm border rounded px-2 py-1"
             placeholder="Комментарий к секции"
-            value={top.sectionComment || ''}
-            onChange={(e) => dispatch({ type: 'setSectionComment', kind: 'top', text: e.target.value })}
+            value={section.sectionComment || ''}
+            onChange={(e) => dispatch({ type: 'setSectionComment', kind, text: e.target.value })}
           />
         </div>
       </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      {renderBlock('top', 'Верх')}
+      {renderBlock('bottom', 'Низ')}
+      {renderBlock('shoes', 'Обувь')}
+      {renderBlock('accessories', 'Аксессуары')}
     </div>
   )
 }
