@@ -1,3 +1,12 @@
+import ClothesSection from '@/components/ClothesSection'
+import ReferenceSection from '@/components/ReferenceSection'
+import UserImageSection from '@/components/UserImageSection'
+import ModeSelector from '@/components/ModeSelector'
+import PresetStyleSelect from '@/components/PresetStyleSelect'
+import OptionsPanel from '@/components/OptionsPanel'
+import GenerateButton from '@/components/GenerateButton'
+import ResultPreview from '@/components/ResultPreview'
+
 export default function Page() {
   return (
     <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -28,22 +37,13 @@ export default function Page() {
       <section className="card p-4 md:p-5 lg:p-6">
         <h2 className="section-title mb-3">Режим и референсы</h2>
         <div className="space-y-4">
-          <div className="border rounded-lg p-3">
-            <div className="font-medium mb-2">Режим работы</div>
-            <p className="help-text">Выберите: по тексту, по референсам или замена одежды на своём фото.</p>
-          </div>
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Референсы</div>
-            <p className="help-text">Свет, Цвет, Стиль — загрузите изображения-референсы.</p>
-          </div>
+          <ModeSelector />
+          <ReferenceSection />
           <div className="border rounded-lg p-3">
             <div className="font-medium">Текстовый бриф</div>
             <p className="help-text">Опционально. Коротко опишите желаемый результат.</p>
           </div>
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Своё изображение</div>
-            <p className="help-text">1–3 фото пользователя. Обязательно для режима замены.</p>
-          </div>
+          <UserImageSection />
         </div>
       </section>
 
@@ -51,22 +51,10 @@ export default function Page() {
       <aside className="card p-4 md:p-5 lg:p-6">
         <h2 className="section-title mb-3">Действие</h2>
         <div className="space-y-4">
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Стиль (пресет)</div>
-            <p className="help-text">street, classic, minimal, sport</p>
-          </div>
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Опции</div>
-            <p className="help-text">фон, детальность, seed и др.</p>
-          </div>
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Сгенерировать</div>
-            <p className="help-text">Кнопка запуска и прогресс выполнения.</p>
-          </div>
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Результат</div>
-            <p className="help-text">Превью и кнопка «Скачать».</p>
-          </div>
+          <PresetStyleSelect />
+          <OptionsPanel />
+          <GenerateButton />
+          <ResultPreview />
         </div>
       </aside>
     </main>
