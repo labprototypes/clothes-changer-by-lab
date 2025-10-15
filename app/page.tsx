@@ -5,20 +5,23 @@ import UserImageSection from '@/components/UserImageSection'
 import ModeSelector from '@/components/ModeSelector'
 import OptionsPanel from '@/components/OptionsPanel'
 import GenerateButton from '@/components/GenerateButton'
-import ResultPreview from '@/components/ResultPreview'
 import { useGenerationReducer } from './hooks/useGenerationReducer'
+import PageShell from '@/components/PageShell'
+import PreviewPane from '@/components/PreviewPane'
 
 export default function Page() {
   const { state, dispatch } = useGenerationReducer()
-  return (
-    <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-      {/* Левая колонка — Одежда */}
-      <section className="card p-4 md:p-5 lg:p-6">
-        <h2 className="section-title mb-3">Одежда</h2>
-  <ClothesSection />
-      </section>
 
-      {/* Средняя колонка — Режим и референсы */}
+  const steps = [
+    { id: 'user', label: 'Своё фото' },
+    { id: 'clothes', label: 'Типаж и одежда' },
+    { id: 'refs', label: 'Референсы' },
+    { id: 'options', label: 'Параметры' },
+    { id: 'preview', label: 'Предпросмотр' },
+  ]
+
+  const center = (
+    <div className="space-y-4">
       <section className="card p-4 md:p-5 lg:p-6">
         <h2 className="section-title mb-3">Режим и референсы</h2>
         <div className="space-y-4">
@@ -40,18 +43,23 @@ export default function Page() {
             />
           </div>
           <UserImageSection />
+          <section className="card p-4 md:p-5 lg:p-6">
+            <h2 className="section-title mb-3">Одежда</h2>
+            <ClothesSection />
+          </section>
+          <section className="card p-4 md:p-5 lg:p-6">
+            <h2 className="section-title mb-3">Действие</h2>
+            <div className="space-y-4">
+              <OptionsPanel />
+              <GenerateButton />
+            </div>
+          </section>
         </div>
       </section>
-
-      {/* Правая колонка — Действие */}
-      <aside className="card p-4 md:p-5 lg:p-6">
-        <h2 className="section-title mb-3">Действие</h2>
-  <div className="space-y-4">
-          <OptionsPanel />
-          <GenerateButton />
-          <ResultPreview />
-        </div>
-      </aside>
-    </main>
+    </div>
   )
+
+  const right = <PreviewPane />
+
+  return <PageShell steps={steps as any} center={center} right={right} />
 }
