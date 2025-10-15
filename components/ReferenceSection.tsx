@@ -1,6 +1,7 @@
 "use client"
 import UploadZone from './UploadZone'
 import { useGeneration } from '@/app/context/GenerationContext'
+import UploadGrid from './UploadGrid'
 
 export default function ReferenceSection() {
   const { state, dispatch, orderingMap } = useGeneration()
@@ -56,25 +57,12 @@ export default function ReferenceSection() {
           <div key={key}>
             <div className="font-medium">{title}</div>
             <UploadZone label={`Загрузить референсы: ${title}`} onFiles={(files) => dispatch({ type: 'addRefFiles', refKind: key, files })} />
-            <ul className="mt-3 space-y-2">
-              {block.items.map((it, i) => (
-                <li key={it.id} className="flex items-center justify-between rounded border p-2">
-                  <div className="flex items-center gap-3">
-                    <div className="text-xs text-gray-500">№{orderingMap.get(it.id)}</div>
-                    <div className="w-12 h-12 overflow-hidden rounded bg-gray-100">
-                      {it.file && <img src={URL.createObjectURL(it.file)} alt="ref" className="w-full h-full object-cover" />}
-                    </div>
-                    <input
-                      className="text-sm border rounded px-2 py-1"
-                      placeholder="Комментарий к этому референсу"
-                      value={it.comment || ''}
-                      onChange={(e) => dispatch({ type: 'setItemComment', area: 'ref', kind: key, index: i, text: e.target.value })}
-                    />
-                  </div>
-                  <button className="text-xs text-red-600" onClick={() => dispatch({ type: 'removeRefItem', refKind: key, index: i })}>Удалить</button>
-                </li>
-              ))}
-            </ul>
+            <UploadGrid
+              items={block.items}
+              ordering={orderingMap}
+              onComment={(i, text) => dispatch({ type: 'setItemComment', area: 'ref', kind: key, index: i, text })}
+              onRemove={(i) => dispatch({ type: 'removeRefItem', refKind: key, index: i })}
+            />
             <div className="mt-2">
               <input
                 className="w-full text-sm border rounded px-2 py-1"
