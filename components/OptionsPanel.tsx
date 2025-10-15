@@ -25,7 +25,7 @@ export default function OptionsPanel() {
               value={opt.aspectRatio || 'match_input_image'}
               onChange={(e) => dispatch({ type: 'setOption', key: 'aspectRatio', value: e.target.value })}
             >
-              <option value="match_input_image">match_input_image</option>
+              <option value="match_input_image">своё изображение</option>
               <option value="1:1">1:1</option>
               <option value="4:3">4:3</option>
               <option value="3:4">3:4</option>

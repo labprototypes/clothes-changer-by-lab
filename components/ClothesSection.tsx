@@ -12,7 +12,7 @@ export default function ClothesSection() {
       <div>
         <div className="font-medium">{title}</div>
         <UploadZone
-          label="Добавить элементы (множественная загрузка)"
+          label="Добавить элементы"
           onFiles={(files) => dispatch({ type: 'addSectionFiles', kind, files })}
         />
         <UploadGrid

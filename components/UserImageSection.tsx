@@ -8,7 +8,7 @@ export default function UserImageSection() {
   return (
     <div>
       <div className="font-medium">Своё изображение</div>
-      <UploadZone label="Загрузить 1–3 фото" onFiles={(files) => dispatch({ type: 'addUserFiles', files })} />
+      <UploadZone multiple={false} label="Загрузить фото" onFiles={(files) => dispatch({ type: 'addUserFiles', files: files.slice(0,1) })} />
       <ul className="mt-3 space-y-2">
         {items.map((it, i) => (
           <li key={it.id} className="flex items-center justify-between rounded border p-2">

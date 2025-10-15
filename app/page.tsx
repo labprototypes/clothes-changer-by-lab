@@ -12,48 +12,43 @@ import PreviewPane from '@/components/PreviewPane'
 export default function Page() {
   const { state, dispatch } = useGenerationReducer()
 
-  const steps = [
-    { id: 'user', label: 'Своё фото' },
-    { id: 'clothes', label: 'Типаж и одежда' },
-    { id: 'refs', label: 'Референсы' },
-    { id: 'options', label: 'Параметры' },
-    { id: 'preview', label: 'Предпросмотр' },
-  ]
-
   const center = (
     <div className="space-y-4">
-      <section className="card p-4 md:p-5 lg:p-6">
-        <h2 className="section-title mb-3">Режим и референсы</h2>
+      <section id="section-user" className="card p-4 md:p-5 lg:p-6">
+        <h2 className="section-title mb-3">Своё изображение</h2>
+        <UserImageSection />
+      </section>
+
+      <section id="section-brief" className="card p-4 md:p-5 lg:p-6">
+        <h2 className="section-title mb-3">Текстовый бриф</h2>
+        <div className="space-y-2">
+          <p className="help-text">Опционально. Коротко опишите желаемый результат.</p>
+          <textarea
+            className="w-full rounded-md border p-2 text-sm"
+            rows={4}
+            placeholder="Например: минималистичный street-образ..."
+            value={state.textBrief}
+            onChange={(e) => dispatch({ type: 'setBrief', text: e.target.value })}
+          />
+        </div>
+      </section>
+
+      <section id="section-refs" className="card p-4 md:p-5 lg:p-6">
+        <h2 className="section-title mb-3">Референсы</h2>
+        <ReferenceSection />
+      </section>
+
+      <section id="section-clothes" className="card p-4 md:p-5 lg:p-6">
+        <h2 className="section-title mb-3">Типаж и одежда</h2>
+        <ClothesSection />
+      </section>
+
+      <section id="section-options" className="card p-4 md:p-5 lg:p-6">
+        <h2 className="section-title mb-3">Параметры</h2>
         <div className="space-y-4">
           <ModeSelector />
-          <div className="border rounded-lg p-3">
-            <div className="font-medium mb-2">Текущий режим: {state.mode}</div>
-            <div className="help-text">Это временный индикатор состояния useReducer.</div>
-          </div>
-          <ReferenceSection />
-          <div className="border rounded-lg p-3">
-            <div className="font-medium">Текстовый бриф</div>
-            <p className="help-text mb-2">Опционально. Коротко опишите желаемый результат.</p>
-            <textarea
-              className="w-full rounded-md border p-2 text-sm"
-              rows={4}
-              placeholder="Например: минималистичный street-образ..."
-              value={state.textBrief}
-              onChange={(e) => dispatch({ type: 'setBrief', text: e.target.value })}
-            />
-          </div>
-          <UserImageSection />
-          <section className="card p-4 md:p-5 lg:p-6">
-            <h2 className="section-title mb-3">Одежда</h2>
-            <ClothesSection />
-          </section>
-          <section className="card p-4 md:p-5 lg:p-6">
-            <h2 className="section-title mb-3">Действие</h2>
-            <div className="space-y-4">
-              <OptionsPanel />
-              <GenerateButton />
-            </div>
-          </section>
+          <OptionsPanel />
+          <GenerateButton />
         </div>
       </section>
     </div>
@@ -61,5 +56,5 @@ export default function Page() {
 
   const right = <PreviewPane />
 
-  return <PageShell steps={steps as any} center={center} right={right} />
+  return <PageShell center={center} right={right} />
 }
