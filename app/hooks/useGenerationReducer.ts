@@ -18,6 +18,7 @@ export type GenerationState = Omit<GenerationPayload, 'sections' | 'refs' | 'use
   loading: boolean
   error: string | null
   resultBase64: string | null
+  history: Array<{ id: string; base64: string; size?: '1K' | '2K' | '4K'; aspectRatio?: string; seed?: number | null; createdAt: number }>
 }
 
 type Action =
@@ -59,6 +60,7 @@ const initialState: GenerationState = {
   loading: false,
   error: null,
   resultBase64: null,
+  history: [],
 }
 
 function reducer(state: GenerationState, action: Action): GenerationState {
@@ -157,8 +159,24 @@ function reducer(state: GenerationState, action: Action): GenerationState {
       return { ...state, loading: action.value }
     case 'setError':
       return { ...state, error: action.message }
-    case 'setResult':
-      return { ...state, resultBase64: action.base64 }
+    case 'setResult': {
+      // Update current preview
+      let next: GenerationState = { ...state, resultBase64: action.base64 }
+      // Push to history on successful generation
+      if (action.base64) {
+        const entry = {
+          id: uuid(),
+          base64: action.base64,
+          size: state.options?.size as any,
+          aspectRatio: state.options?.aspectRatio,
+          seed: state.options?.seed ?? null,
+          createdAt: Date.now(),
+        }
+        const hist = [entry, ...state.history].slice(0, 12)
+        next = { ...next, history: hist }
+      }
+      return next
+    }
     case 'clearAll':
       return { ...initialState }
     default:

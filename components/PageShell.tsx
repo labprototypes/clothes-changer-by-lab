@@ -1,6 +1,7 @@
 "use client"
 import { ReactNode, useMemo, useState } from 'react'
 import Stepper, { type Step } from './Stepper'
+import Toaster from './Toaster'
 
 export default function PageShell({
   left,
@@ -17,7 +18,7 @@ export default function PageShell({
   const content = useMemo(() => center, [center, current])
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)_360px] gap-4 md:gap-6">
+  <div className="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)_360px] gap-4 md:gap-6">
       <aside className="hidden lg:block">
         <div className="sticky top-4">
           <Stepper steps={steps} current={current} onChange={setCurrent} />
@@ -34,6 +35,7 @@ export default function PageShell({
           {right}
         </div>
       </aside>
+  <Toaster />
     </div>
   )
 }
